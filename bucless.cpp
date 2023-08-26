@@ -12,6 +12,7 @@ vector<vector<int>> multiplyMatrices(const vector<vector<int>>& matrixA, const v
     int size = matrixA.size();
     vector<vector<int>> result(size, vector<int>(size, 0));
 
+    // Realizar la multiplicación de matrices utilizando tres bucles anidados
     for (int i = 0; i < size; ++i) {
         for (int j = 0; j < size; ++j) {
             for (int k = 0; k < size; ++k) {
@@ -27,7 +28,7 @@ int main() {
     int size;
 
     // Solicitar al usuario ingresar el tamaño de la matriz cuadrada
-    cout << "Ingrese el tamaño de la matriz cuadrada : ";
+    cout << "Ingrese el tamaño de la matriz cuadrada: ";
     cin >> size;
 
     if (size <= 0) {
@@ -38,6 +39,7 @@ int main() {
     int numRepetitions = 5; // Número de repeticiones
     double totalElapsedTime = 0.0; // Tiempo total de ejecución
 
+    // Realizar la multiplicación de matrices y medir el tiempo en cada repetición
     for (int repetition = 1; repetition <= numRepetitions; ++repetition) {
         // Reservar memoria para las matrices
         vector<vector<int>> matrixA(size, vector<int>(size));
@@ -55,7 +57,7 @@ int main() {
             }
         }
 
-        // Medir el tiempo de ejecución
+        // Medir el tiempo de ejecución antes y después de la multiplicación de matrices
         high_resolution_clock::time_point startTime = high_resolution_clock::now();
 
         // Realizar la multiplicación de matrices
@@ -64,11 +66,13 @@ int main() {
         high_resolution_clock::time_point endTime = high_resolution_clock::now();
         duration<double> elapsedTime = duration_cast<duration<double>>(endTime - startTime);
 
+        // Mostrar el tiempo de ejecución de cada repetición
         cout << "Repetición " << repetition << ": " << elapsedTime.count() << " segundos" << endl;
 
         totalElapsedTime += elapsedTime.count();
     }
 
+    // Mostrar el tiempo total de ejecución de todas las repeticiones
     cout << "Tiempo total de ejecución de las " << numRepetitions << " repeticiones: " << totalElapsedTime << " segundos" << endl;
 
     return 0;
