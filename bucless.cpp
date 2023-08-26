@@ -2,60 +2,74 @@
 #include <vector>
 #include <chrono>
 #include <random>
+#include <stdexcept>
 
 using namespace std;
 using namespace std::chrono;
 
-const int BLOCK_SIZE = 32;
+// Función para multiplicar dos matrices
+vector<vector<int>> multiplyMatrices(const vector<vector<int>>& matrixA, const vector<vector<int>>& matrixB) {
+    int size = matrixA.size();
+    vector<vector<int>> result(size, vector<int>(size, 0));
 
-// Función para realizar la multiplicación de matrices con bloques
-void MultiplyByBlocks(int n, vector<vector<double>>& a, vector<vector<double>>& b, vector<vector<double>>& c) {
-    for (int bi = 0; bi < n; bi += BLOCK_SIZE) {
-        for (int bj = 0; bj < n; bj += BLOCK_SIZE) {
-            for (int bk = 0; bk < n; bk += BLOCK_SIZE) {
-                for (int i = 0; i < BLOCK_SIZE; i++) {
-                    for (int j = 0; j < BLOCK_SIZE; j++) {
-                        for (int k = 0; k < BLOCK_SIZE; k++) {
-                            c[bi + i][bj + j] += a[bi + i][bk + k] * b[bk + k][bj + j];
-                        }
-                    }
-                }
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            for (int k = 0; k < size; ++k) {
+                result[i][j] += matrixA[i][k] * matrixB[k][j];
             }
         }
     }
+
+    return result;
 }
 
 int main() {
-    int n;
-    cout << "Introduce la dimensión n de la matriz: ";
-    cin >> n;
+    int size;
 
-    vector<vector<double>> A(n, vector<double>(n, 1.0)); // Llenamos A con 1.0
-    vector<vector<double>> B(n, vector<double>(n, 2.0)); // Llenamos B con 2.0
-    vector<vector<double>> C(n, vector<double>(n, 0.0)); // Inicializamos C con 0.0
+    // Solicitar al usuario ingresar el tamaño de la matriz cuadrada
+    cout << "Ingrese el tamaño de la matriz cuadrada : ";
+    cin >> size;
 
-    double elapsed = 0.0;
-    const int NUM_REPETITIONS = 5;
-
-    // "Calentamiento" inicial para preparar la caché
-    MultiplyByBlocks(n, A, B, C);
-
-    cout << "Multiplicando matrices " << NUM_REPETITIONS << " veces..." << endl;
-
-    for (int i = 0; i < NUM_REPETITIONS; ++i) {
-        auto start = high_resolution_clock::now();
-        MultiplyByBlocks(n, A, B, C);
-        auto stop = high_resolution_clock::now();
-        auto duration = duration_cast<microseconds>(stop - start);
-        elapsed += duration.count() / 1e6;
-        if (i == 0) {
-            cout << "Primera repetición tomó " << elapsed << " segundos" << endl;
-        }
+    if (size <= 0) {
+        cerr << "El tamaño de la matriz debe ser un número positivo." << endl;
+        return 1;
     }
 
-    double averageTime = elapsed / NUM_REPETITIONS;
+    int numRepetitions = 5; // Número de repeticiones
+    double totalElapsedTime = 0.0; // Tiempo total de ejecución
 
-    cout << "Tiempo promedio por operación (por bloques) = " << averageTime << " segundos" << endl;
+    for (int repetition = 1; repetition <= numRepetitions; ++repetition) {
+        // Reservar memoria para las matrices
+        vector<vector<int>> matrixA(size, vector<int>(size));
+        vector<vector<int>> matrixB(size, vector<int>(size));
+
+        // Llenar las matrices con valores aleatorios usando un generador más eficiente
+        random_device rd;
+        mt19937 gen(rd());
+        uniform_int_distribution<int> dis(1, 100); // Valores entre 1 y 100
+
+        for (int i = 0; i < size; ++i) {
+            for (int j = 0; j < size; ++j) {
+                matrixA[i][j] = dis(gen);
+                matrixB[i][j] = dis(gen);
+            }
+        }
+
+        // Medir el tiempo de ejecución
+        high_resolution_clock::time_point startTime = high_resolution_clock::now();
+
+        // Realizar la multiplicación de matrices
+        vector<vector<int>> result = multiplyMatrices(matrixA, matrixB);
+
+        high_resolution_clock::time_point endTime = high_resolution_clock::now();
+        duration<double> elapsedTime = duration_cast<duration<double>>(endTime - startTime);
+
+        cout << "Repetición " << repetition << ": " << elapsedTime.count() << " segundos" << endl;
+
+        totalElapsedTime += elapsedTime.count();
+    }
+
+    cout << "Tiempo total de ejecución de las " << numRepetitions << " repeticiones: " << totalElapsedTime << " segundos" << endl;
 
     return 0;
 }
