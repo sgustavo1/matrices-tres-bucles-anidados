@@ -2,7 +2,6 @@
 #include <vector>
 #include <chrono>
 #include <random>
-#include <stdexcept>
 
 using namespace std;
 using namespace std::chrono;
@@ -10,30 +9,29 @@ using namespace std::chrono;
 // Función para multiplicar dos matrices
 vector<vector<int>> multiplyMatrices(const vector<vector<int>>& matrixA, const vector<vector<int>>& matrixB) {
     int size = matrixA.size();
-    vector<vector<int>> result(size, vector<int>(size, 0)); // Inicializar la matriz de resultados con ceros
+    vector<vector<int>> result(size, vector<int>(size, 0));
 
-    // Realizar la multiplicación de matrices utilizando tres bucles anidados
     for (int i = 0; i < size; ++i) {
         for (int j = 0; j < size; ++j) {
             for (int k = 0; k < size; ++k) {
-                result[i][j] += matrixA[i][k] * matrixB[k][j]; // Realizar la suma acumulativa de los productos
+                result[i][j] += matrixA[i][k] * matrixB[k][j];
             }
         }
     }
 
-    return result; // Devolver la matriz resultante
+    return result;
 }
 
 int main() {
     int size;
 
     // Solicitar al usuario ingresar el tamaño de la matriz cuadrada
-    cout << "Ingrese el tamaño de la matriz cuadrada (por ejemplo, 2 para 2x2, 3 para 3x3): ";
+    cout << "Ingrese el tamaño de la matriz cuadrada: ";
     cin >> size;
 
     if (size <= 0) {
-        cerr << "El tamaño de la matriz debe ser un número positivo." << endl; // Mostrar un error si el tamaño es no positivo
-        return 1; // Salir del programa con un código de error
+        cerr << "El tamaño de la matriz debe ser un número positivo." << endl;
+        return 1;
     }
 
     int numRepetitions = 5; // Número de repeticiones
@@ -66,8 +64,10 @@ int main() {
         high_resolution_clock::time_point endTime = high_resolution_clock::now();
         duration<double> elapsedTime = duration_cast<duration<double>>(endTime - startTime);
 
-        // Mostrar el tiempo de ejecución de cada repetición
-        cout << "Repetición " << repetition << ": " << elapsedTime.count() << " segundos" << endl;
+        // Imprimir algunos valores del resultado para evitar la optimización del compilador
+        cout << "Repetición " << repetition << ": Tiempo " << elapsedTime.count() << " segundos" << endl;
+        cout << "Resultado de la multiplicación:" << endl;
+        cout << result[0][0] << endl; // Imprime un valor de la matriz resultante
 
         totalElapsedTime += elapsedTime.count();
     }
